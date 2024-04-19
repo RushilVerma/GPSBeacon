@@ -5,9 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -47,6 +49,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LocationButton(
     fusedLocationClient: FusedLocationProviderClient,
@@ -92,7 +95,20 @@ fun LocationButton(
 fun HistoryList(history: List<String>) {
     LazyColumn {
         items(history.size) { index ->
-            Text(text = history[index])
+            LocationCard(location = history[index])
         }
+    }
+}
+
+@Composable
+fun LocationCard(location: String) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+    ) {
+        Text(
+            text = location,
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }

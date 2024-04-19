@@ -1,5 +1,7 @@
 package com.techcravers.gpsbeacon
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,13 +13,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+//import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.Task
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val history = mutableStateListOf<String>()
+
+    companion object {
+        const val PERMISSION_REQUEST_CODE = 123 // Define your own request code
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    LocationButton(onLocationSaved = { location ->
+                    LocationButton(fusedLocationClient, onLocationSaved = { location ->
                         history.add("Location: $location")
                     })
                     Spacer(modifier = Modifier.height(16.dp))
@@ -38,16 +48,37 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LocationButton(onLocationSaved: (String) -> Unit) {
+fun LocationButton(
+    fusedLocationClient: FusedLocationProviderClient,
+    onLocationSaved: (String) -> Unit
+) {
     val context = LocalContext.current
     var location by remember { mutableStateOf("") }
+//    val lifecycleOwner = LocalLifecycleOwner.current
 
     Button(onClick = {
-        // Get current location
-        // For simplicity, assuming location is fetched and converted to a string
-        val currentLocation = "Latitude: 40.7128, Longitude: -74.0060"
-        location = currentLocation
-        onLocationSaved(currentLocation)
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val locationTask: Task<android.location.Location> = fusedLocationClient.lastLocation
+            locationTask.addOnSuccessListener { locationResult ->
+                locationResult?.let {
+                    val latitude = it.latitude
+                    val longitude = it.longitude
+                    val currentLocation = "Latitude: $latitude, Longitude: $longitude"
+                    location = currentLocation
+                    onLocationSaved(currentLocation)
+                }
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                context as ComponentActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                MainActivity.PERMISSION_REQUEST_CODE
+            )
+        }
     }) {
         Text(text = "Save Current Location")
     }

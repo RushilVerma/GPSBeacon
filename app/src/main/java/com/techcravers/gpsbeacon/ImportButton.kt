@@ -48,12 +48,13 @@ fun importLocationHistory(context: Context): List<LocationItem> {
 
         for (line in lines.drop(1)) { // Skip header line
             val columns = line.split(",")
-            if (columns.size >= 4) {
+            if (columns.size >= 5) {
                 val id = columns[0].toInt()
                 val location = columns[1]
                 val latitude = columns[2].toDouble()
                 val longitude = columns[3].toDouble()
-                locationHistory.add(LocationItem(id, location, latitude, longitude))
+                val altitude = columns[4].toDouble()
+                locationHistory.add(LocationItem(id, location, latitude, longitude, altitude))
             }
         }
 

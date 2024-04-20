@@ -13,7 +13,13 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-data class LocationItem(val id: Int, val location: String, val latitude: Double, val longitude: Double)
+data class LocationItem(
+    val id: Int,
+    val location: String,
+    val latitude: Double,
+    val longitude: Double,
+    val altitude: Double
+)
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -32,8 +38,8 @@ class MainActivity : ComponentActivity() {
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        LocationButton(fusedLocationClient, onLocationSaved = { location, latitude, longitude ->
-                            history.add(LocationItem(history.size, location, latitude, longitude))
+                        LocationButton(fusedLocationClient, onLocationSaved = { location, latitude, longitude, altitude ->
+                            history.add(LocationItem(history.size, location, latitude, longitude, altitude))
                         })
 //                        Spacer(modifier = Modifier.width(16.dp))
                         ExportButton(context = applicationContext, locationHistory = history)

@@ -18,7 +18,15 @@ fun ShowDifference(selectedLocations: List<LocationItem>) {
         val latitude2 = Math.toRadians(location2.latitude)
         val longitude2 = Math.toRadians(location2.longitude)
 
+        val latitudeDifference = latitude2 - latitude1
         val longitudeDifference = longitude2 - longitude1
+
+        val a = sin(latitudeDifference / 2).pow(2) + cos(latitude1) * cos(latitude2) * sin(longitudeDifference / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        val earthRadius = 6371 // Radius of the Earth in kilometers
+        val distance = earthRadius * c
+
+        val heightDifference = location2.altitude - location1.altitude
 
         val y = sin(longitudeDifference) * cos(latitude2)
         val x = cos(latitude1) * sin(latitude2) - sin(latitude1) * cos(latitude2) * cos(longitudeDifference)
@@ -29,9 +37,10 @@ fun ShowDifference(selectedLocations: List<LocationItem>) {
         val index = ((bearingDegrees + 360) % 360 / 45).toInt()
         val direction = compassDirections[index]
 
-        "Navigation : $direction"
+        "Navigation from ${location1.location} to ${location2.location}: " +
+                "Direction: $direction, Distance: ${"%.4f".format(distance)} km, Height Difference: $heightDifference meters"
     } else {
-        "Select two locations to see the navigation direction"
+        "Select two locations to see the navigation details"
     }
 
     Text(

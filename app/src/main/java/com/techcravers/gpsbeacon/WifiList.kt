@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun WifiNetworkItems(network: ScanResult) {
+fun WifiListItems(network: WifiNetworkItem) {
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -34,19 +34,19 @@ fun WifiNetworkItems(network: ScanResult) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${network.SSID}",
+                text = "${network.ssid}",
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center // Center-align the text
             )
             Divider(modifier = Modifier.width(1.dp)) // Vertical divider
             Text(
-                text = "${network.level}",
+                text = "${network.rssi}",
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center // Center-align the text
             )
             Divider(modifier = Modifier.width(1.dp)) // Vertical divider
             Text(
-                text = "N/A",
+                text = "${network.location.location}",
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center // Center-align the text
             )
@@ -55,7 +55,7 @@ fun WifiNetworkItems(network: ScanResult) {
 }
 
 @Composable
-fun WifiNetworkList(topNetworks: List<ScanResult>) {
+fun WifiNetworkList(NetworkLists: List<WifiNetworkItem>) {
     LazyColumn {
         item {
             Row(
@@ -69,40 +69,48 @@ fun WifiNetworkList(topNetworks: List<ScanResult>) {
                 Text(text = "Location", modifier = Modifier.weight(1f))
             }
         }
-        items(topNetworks) { network ->
-            WifiNetworkItems(network = network)
+        items(NetworkLists) { network ->
+            WifiListItems(network = network)
         }
     }
 }
 
 @Composable
-fun RefreshWifiNetworkList(context: Context, wifiDetails: MutableList<WifiNetworkItem>) {
-    var topNetworks by remember { mutableStateOf(emptyList<ScanResult>()) }
+fun RefreshWifiNetworkList(
+    context: Context,
+    wifiDetails: MutableList<WifiNetworkItem>,
+    currentLocation: MutableState<LocationItem>
+) {
     val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
     LaunchedEffect(Unit) {
         val delayMillis = 1000L // 1 second
         while (true) {
             if (wifiManager != null) {
                 val networks = scanWifiNetworks(context, wifiManager)
-                topNetworks = networks.sortedByDescending { it.level }
-                wifiDetails.clear()
-                networks.sortedByDescending { it.level }.forEach { network ->
-                    wifiDetails.add(
-                        WifiNetworkItem(
-                            ssid = network.SSID,
-                            rssi = network.level,
-                            location = LocationItem(0, "N/A", 0.0, 0.0, 0.0)
+                val topNetworks = networks.sortedByDescending { it.level }
+                topNetworks.forEach { network ->
+                    val existingNetwork = wifiDetails.find { it.ssid == network.SSID }
+                    if (existingNetwork != null) {
+                        if (existingNetwork.location.id == -1 || existingNetwork.rssi < network.level) {
+                            existingNetwork.location = currentLocation.value // Update location
+                        }
+                    } else {
+                        wifiDetails.add(
+                            WifiNetworkItem(
+                                ssid = network.SSID,
+                                rssi = network.level,
+                                location = currentLocation.value
+                            )
                         )
-                    )
+                    }
                 }
             }
             delay(delayMillis)
         }
     }
 
-    WifiNetworkList(topNetworks = topNetworks)
+    WifiNetworkList(NetworkLists = wifiDetails)
 }
-
 fun scanWifiNetworks(context: Context, wifiManager: WifiManager?): List<ScanResult> {
     val permissionsGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
     if (!permissionsGranted) {

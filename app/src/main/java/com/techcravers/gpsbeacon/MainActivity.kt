@@ -23,7 +23,7 @@ data class LocationItem(
 data class WifiNetworkItem(
     val ssid: String,
     val rssi: Int,
-    val location: LocationItem
+    var location: LocationItem
 )
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
     private val history = mutableStateListOf<LocationItem>()
     private val selectedLocations = mutableStateListOf<LocationItem>()
     private val wifiDetails = mutableStateListOf<WifiNetworkItem>()
-    private val currentLocation = mutableStateOf(LocationItem(0, "Fetching location...", 0.0, 0.0, 0.0))
+    private val currentLocation = mutableStateOf(LocationItem(-1, "Fetching location...", 0.0, 0.0, 0.0))
     companion object {
         const val PERMISSION_REQUEST_CODE = 123 // Define your own request code
     }
@@ -62,8 +62,7 @@ class MainActivity : ComponentActivity() {
                     Spacer(modifier = Modifier.height(16.dp))
                     HistoryList(history = history, selectedLocations = selectedLocations)
                     Spacer(modifier = Modifier.height(16.dp))
-                    RefreshWifiNetworkList(context = applicationContext, wifiDetails = wifiDetails)
-
+                    RefreshWifiNetworkList(context = applicationContext, wifiDetails = wifiDetails,currentLocation=currentLocation)
                 }
             }
         }

@@ -72,7 +72,7 @@ private fun refreshLocation(
                 val latitude = it.latitude
                 val longitude = it.longitude
                 val altitude = it.altitude
-                val currentLocation = "Latitude: $latitude, Longitude: $longitude, Altitude : $altitude"
+                val currentLocation = "Latitude: $latitude, \nLongitude: $longitude, \nAltitude : $altitude"
                 onLocationFetched(currentLocation)
             }
         }

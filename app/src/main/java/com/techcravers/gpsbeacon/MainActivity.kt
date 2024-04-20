@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,13 +48,14 @@ class MainActivity : ComponentActivity() {
                             history.addAll(importedHistory)
                         }
 //                        Spacer(modifier = Modifier.width(8.dp))
-                        LocationDisplay(fusedLocationClient = fusedLocationClient, context = LocalContext.current)
+                        LocationDisplay(fusedLocationClient = fusedLocationClient, context = applicationContext)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     ShowDifference(selectedLocations = selectedLocations)
                     Spacer(modifier = Modifier.height(16.dp))
                     HistoryList(history = history, selectedLocations = selectedLocations)
                     Spacer(modifier = Modifier.height(16.dp))
+                    RefreshWifiNetworkList(context = applicationContext)
 
                 }
             }

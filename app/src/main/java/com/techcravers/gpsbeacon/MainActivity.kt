@@ -20,11 +20,18 @@ data class LocationItem(
     val altitude: Double
 )
 
+data class WifiNetworkItem(
+    val ssid: String,
+    val rssi: Int,
+    val location: LocationItem
+)
+
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val history = mutableStateListOf<LocationItem>()
     private val selectedLocations = mutableStateListOf<LocationItem>()
-
+    private val wifiDetails = mutableStateListOf<WifiNetworkItem>()
+    private val currentLocation = mutableStateOf(LocationItem(0, "Fetching location...", 0.0, 0.0, 0.0))
     companion object {
         const val PERMISSION_REQUEST_CODE = 123 // Define your own request code
     }
@@ -41,21 +48,21 @@ class MainActivity : ComponentActivity() {
                             history.add(LocationItem(history.size, location, latitude, longitude, altitude))
                         })
 //                        Spacer(modifier = Modifier.width(16.dp))
-                        ExportButton(context = applicationContext, locationHistory = history)
+                        ExportButton(context = LocalContext.current, locationHistory = history, wifiNetworks = wifiDetails)
 //                        Spacer(modifier = Modifier.width(8.dp))
                         ImportButton(context = applicationContext) { importedHistory ->
                             history.clear()
                             history.addAll(importedHistory)
                         }
 //                        Spacer(modifier = Modifier.width(8.dp))
-                        LocationDisplay(fusedLocationClient = fusedLocationClient, context = applicationContext)
+                        LocationDisplay(fusedLocationClient = fusedLocationClient, context = applicationContext, locationState = currentLocation)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     ShowDifference(selectedLocations = selectedLocations)
                     Spacer(modifier = Modifier.height(16.dp))
                     HistoryList(history = history, selectedLocations = selectedLocations)
                     Spacer(modifier = Modifier.height(16.dp))
-                    RefreshWifiNetworkList(context = applicationContext)
+                    RefreshWifiNetworkList(context = applicationContext, wifiDetails = wifiDetails)
 
                 }
             }

@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 
 @Composable
-fun WifiNetworkItem(network: ScanResult) {
+fun WifiNetworkItems(network: ScanResult) {
     Column(
         modifier = Modifier
             .padding(vertical = 8.dp)
@@ -70,13 +70,13 @@ fun WifiNetworkList(topNetworks: List<ScanResult>) {
             }
         }
         items(topNetworks) { network ->
-            WifiNetworkItem(network = network)
+            WifiNetworkItems(network = network)
         }
     }
 }
 
 @Composable
-fun RefreshWifiNetworkList(context: Context) {
+fun RefreshWifiNetworkList(context: Context, wifiDetails: MutableList<WifiNetworkItem>) {
     var topNetworks by remember { mutableStateOf(emptyList<ScanResult>()) }
     val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
     LaunchedEffect(Unit) {
@@ -84,7 +84,17 @@ fun RefreshWifiNetworkList(context: Context) {
         while (true) {
             if (wifiManager != null) {
                 val networks = scanWifiNetworks(context, wifiManager)
-                topNetworks = networks.sortedByDescending { it.level }.take(5) // Get top 5 networks by signal strength
+                topNetworks = networks.sortedByDescending { it.level }
+                wifiDetails.clear()
+                networks.sortedByDescending { it.level }.forEach { network ->
+                    wifiDetails.add(
+                        WifiNetworkItem(
+                            ssid = network.SSID,
+                            rssi = network.level,
+                            location = LocationItem(0, "N/A", 0.0, 0.0, 0.0)
+                        )
+                    )
+                }
             }
             delay(delayMillis)
         }
@@ -104,4 +114,4 @@ fun scanWifiNetworks(context: Context, wifiManager: WifiManager?): List<ScanResu
     return wifiManager?.scanResults ?: emptyList()
 }
 
-private const val PERMISSION_REQUEST_CODE = 123 // Define your own request code
+private const val PERMISSION_REQUEST_CODE = 111 // Define your own request code

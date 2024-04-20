@@ -9,27 +9,29 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+
 @Composable
-fun LocationDisplay(fusedLocationClient: FusedLocationProviderClient, context: Context) {
-    var currentLocation by remember { mutableStateOf("Fetching location...") }
+fun LocationDisplay(
+    fusedLocationClient: FusedLocationProviderClient,
+    context: Context,
+    locationState: MutableState<LocationItem>
+) {
+
     var cardColor by remember { mutableStateOf(Color.Cyan) }
 
     LaunchedEffect(Unit) {
         while (true) {
             refreshLocation(context, fusedLocationClient) { location ->
-                currentLocation = location
+                locationState.value = location
                 cardColor = generateRandomColor()
             }
             delay(1000) // Delay for 1 second
@@ -44,7 +46,7 @@ fun LocationDisplay(fusedLocationClient: FusedLocationProviderClient, context: C
 //            .padding(16.dp),
 //        elevation = 4.dp
     ) {
-        Text(text = currentLocation)
+        Text(text = locationState.value.location)
     }
 }
 
@@ -59,7 +61,7 @@ private fun generateRandomColor(): Color {
 private fun refreshLocation(
     context: Context,
     fusedLocationClient: FusedLocationProviderClient,
-    onLocationFetched: (String) -> Unit
+    onLocationFetched: (LocationItem) -> Unit
 ) {
     if (ContextCompat.checkSelfPermission(
             context,
@@ -72,8 +74,9 @@ private fun refreshLocation(
                 val latitude = it.latitude
                 val longitude = it.longitude
                 val altitude = it.altitude
-                val currentLocation = "Latitude: $latitude, \nLongitude: $longitude, \nAltitude : $altitude"
-                onLocationFetched(currentLocation)
+                val location = "Latitude: $latitude, \nLongitude: $longitude, \nAltitude : $altitude"
+                val currLocation = LocationItem(-1,location,latitude,longitude, altitude)
+                onLocationFetched(currLocation)
             }
         }
     } else {

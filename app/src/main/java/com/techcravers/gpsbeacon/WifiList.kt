@@ -34,7 +34,7 @@ fun WifiListItems(network: WifiNetworkItem) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "${network.ssid}",
+                text = network.ssid,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center // Center-align the text
             )
@@ -46,7 +46,7 @@ fun WifiListItems(network: WifiNetworkItem) {
             )
             Divider(modifier = Modifier.width(1.dp)) // Vertical divider
             Text(
-                text = "${network.location.location}",
+                text = network.location.location,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center // Center-align the text
             )
@@ -55,7 +55,7 @@ fun WifiListItems(network: WifiNetworkItem) {
 }
 
 @Composable
-fun WifiNetworkList(NetworkLists: List<WifiNetworkItem>) {
+fun WifiNetworkList(networkLists: List<WifiNetworkItem>) {
     LazyColumn {
         item {
             Row(
@@ -69,7 +69,7 @@ fun WifiNetworkList(NetworkLists: List<WifiNetworkItem>) {
                 Text(text = "Location", modifier = Modifier.weight(1f))
             }
         }
-        items(NetworkLists) { network ->
+        items(networkLists) { network ->
             WifiListItems(network = network)
         }
     }
@@ -85,31 +85,29 @@ fun RefreshWifiNetworkList(
     LaunchedEffect(Unit) {
         val delayMillis = 1000L // 1 second
         while (true) {
-            if (wifiManager != null) {
-                val networks = scanWifiNetworks(context, wifiManager)
-                val topNetworks = networks.sortedByDescending { it.level }
-                topNetworks.forEach { network ->
-                    val existingNetwork = wifiDetails.find { it.ssid == network.SSID }
-                    if (existingNetwork != null) {
-                        if (existingNetwork.location.id == -1 || existingNetwork.rssi < network.level) {
-                            existingNetwork.location = currentLocation.value // Update location
-                        }
-                    } else {
-                        wifiDetails.add(
-                            WifiNetworkItem(
-                                ssid = network.SSID,
-                                rssi = network.level,
-                                location = currentLocation.value
-                            )
-                        )
+            val networks = scanWifiNetworks(context, wifiManager)
+            val topNetworks = networks.sortedByDescending { it.level }
+            topNetworks.forEach { network ->
+                val existingNetwork = wifiDetails.find { it.ssid == network.SSID }
+                if (existingNetwork != null) {
+                    if (existingNetwork.location.id == -1 || existingNetwork.rssi < network.level) {
+                        existingNetwork.location = currentLocation.value // Update location
                     }
+                } else {
+                    wifiDetails.add(
+                        WifiNetworkItem(
+                            ssid = network.SSID,
+                            rssi = network.level,
+                            location = currentLocation.value
+                        )
+                    )
                 }
             }
             delay(delayMillis)
         }
     }
 
-    WifiNetworkList(NetworkLists = wifiDetails)
+    WifiNetworkList(networkLists = wifiDetails)
 }
 fun scanWifiNetworks(context: Context, wifiManager: WifiManager?): List<ScanResult> {
     val permissionsGranted = ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED

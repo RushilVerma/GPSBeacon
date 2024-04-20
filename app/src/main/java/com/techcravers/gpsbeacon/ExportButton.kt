@@ -44,7 +44,7 @@ fun exportLocationHistory(context: Context, locationHistory: List<LocationItem>)
     csvWriter.append("ID,Location\n")
 
     for (locationItem in locationHistory) {
-        csvWriter.append("${locationItem.id},${locationItem.location}\n")
+        csvWriter.append("${locationItem.id},${locationItem.location},${locationItem.latitude},${locationItem.longitude}\n")
     }
 
     csvWriter.flush()

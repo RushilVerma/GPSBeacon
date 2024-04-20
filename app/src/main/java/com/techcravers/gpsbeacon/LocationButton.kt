@@ -34,7 +34,7 @@ import com.google.android.gms.tasks.Task
 @Composable
 fun LocationButton(
     fusedLocationClient: FusedLocationProviderClient,
-    onLocationSaved: (String) -> Unit
+    onLocationSaved: (String, Double, Double) -> Unit
 ) {
     val context = LocalContext.current
     var location by remember { mutableStateOf("") }
@@ -55,7 +55,7 @@ fun LocationButton(
                         val longitude = it.longitude
                         val currentLocation = "Latitude: $latitude, Longitude: $longitude"
                         location = currentLocation
-                        onLocationSaved(currentLocation)
+                        onLocationSaved(currentLocation, latitude, longitude)
                     }
                 }
             } else {

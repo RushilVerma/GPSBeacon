@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-data class LocationItem(val id: Int, val location: String)
+data class LocationItem(val id: Int, val location: String, val latitude: Double, val longitude: Double)
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -32,8 +32,8 @@ class MainActivity : ComponentActivity() {
             Surface(modifier = Modifier.fillMaxSize()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        LocationButton(fusedLocationClient, onLocationSaved = { location ->
-                            history.add(LocationItem(history.size, location))
+                        LocationButton(fusedLocationClient, onLocationSaved = { location, latitude, longitude ->
+                            history.add(LocationItem(history.size, location, latitude, longitude))
                         })
 //                        Spacer(modifier = Modifier.width(16.dp))
                         ExportButton(context = applicationContext, locationHistory = history)
@@ -55,18 +55,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
-
-@Composable
-fun ShowDifference(selectedLocations: List<LocationItem>) {
-    val difference = if (selectedLocations.size == 2) {
-        "Difference: ${selectedLocations[0].location} - ${selectedLocations[1].location}"
-    } else {
-        "Select two locations to see the difference"
-    }
-
-    Text(
-        text = difference,
-        modifier = Modifier.padding(16.dp)
-    )
 }

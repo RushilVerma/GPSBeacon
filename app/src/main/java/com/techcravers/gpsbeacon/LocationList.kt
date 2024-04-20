@@ -12,8 +12,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 
@@ -50,16 +52,17 @@ fun LocationCard(locationItem: LocationItem, isSelected: Boolean, onClick: () ->
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .height(50.dp)
+            .padding(5.dp)
             .clickable { onClick.invoke() },
         color = if (isSelected) Color.Green else Color.White
     ) {
-        Card(
-            modifier = Modifier.padding(16.dp)
-        ) {
+
             Text(
-                text = locationItem.location
+                text = locationItem.location,
+                modifier = Modifier.fillMaxSize(),
+                textAlign = TextAlign.Center
             )
-        }
+
     }
 }

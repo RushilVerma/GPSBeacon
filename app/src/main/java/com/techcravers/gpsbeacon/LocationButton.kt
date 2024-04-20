@@ -38,6 +38,8 @@ fun LocationButton(
 ) {
     val context = LocalContext.current
     var location by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) }
+    var editedLocation by remember { mutableStateOf("") }
 
     Card(modifier = Modifier
 //        .fillMaxWidth()

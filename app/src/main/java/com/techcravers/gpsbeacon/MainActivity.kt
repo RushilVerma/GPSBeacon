@@ -32,6 +32,8 @@ class MainActivity : ComponentActivity() {
     private val selectedLocations = mutableStateListOf<LocationItem>()
     private val wifiDetails = mutableStateListOf<WifiNetworkItem>()
     private val currentLocation = mutableStateOf(LocationItem(-1, "Fetching location...", 0.0, 0.0, 0.0))
+    private val showEditNameDialog = mutableStateOf(false)
+
     companion object {
         const val PERMISSION_REQUEST_CODE = 123 // Define your own request code
     }
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         LocationButton(fusedLocationClient, onLocationSaved = { location, latitude, longitude, altitude ->
+
                             history.add(LocationItem(history.size, location, latitude, longitude, altitude))
                         })
 //                        Spacer(modifier = Modifier.width(16.dp))

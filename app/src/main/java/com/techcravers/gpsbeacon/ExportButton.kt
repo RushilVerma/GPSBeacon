@@ -48,19 +48,19 @@ fun exportLocationHistory(context: Context, locationHistory: List<LocationItem>,
         val csvWriter = FileWriter(filePath)
 
         // Write header for location data
-        csvWriter.append("ID,Location,Latitude,Longitude,Altitude\n")
+        csvWriter.append("ID,Latitude,Longitude,Altitude\n")
 
         // Write location data
         for (locationItem in locationHistory) {
-            csvWriter.append("${locationItem.id},${locationItem.location},${locationItem.latitude},${locationItem.longitude},${locationItem.altitude}\n")
+            csvWriter.append("${locationItem.id},${locationItem.latitude},${locationItem.longitude},${locationItem.altitude}\n")
         }
 
         // Write header for Wi-Fi data
-        csvWriter.append("\nSSID,RSSI,Location\n")
+        csvWriter.append("\nSSID,RSSI,Latitude,Longitude,Altitude\n")
 
         // Write Wi-Fi data
         for (wifiNetwork in wifiNetworks) {
-            csvWriter.append("${wifiNetwork.ssid},${wifiNetwork.rssi},${wifiNetwork.location.location}\n")
+            csvWriter.append("${wifiNetwork.ssid},${wifiNetwork.rssi},${wifiNetwork.location.latitude},${wifiNetwork.location.longitude},${wifiNetwork.location.altitude}\n")
         }
 
         csvWriter.flush()

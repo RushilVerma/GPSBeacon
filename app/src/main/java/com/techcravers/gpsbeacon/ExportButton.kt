@@ -25,7 +25,7 @@ fun ExportButton(context: Context, locationHistory: List<LocationItem>) {
             exportLocationHistory(context, locationHistory)
         }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(8.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.export_icon), // Your export icon drawable
                 contentDescription = "Export Icon"

@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,7 @@ fun LocationButton(
     var location by remember { mutableStateOf("") }
 
     Card(modifier = Modifier
-        .fillMaxWidth()
+//        .fillMaxWidth()
         .padding(8.dp)
         .clickable {
             if (ContextCompat.checkSelfPermission(
@@ -66,13 +67,13 @@ fun LocationButton(
             }
         }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(8.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.add_becon), // Your export icon drawable
                 contentDescription = "Add Beacon Icon"
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Current Location: $location")
+            Text(text = "Add X")
         }
     }
 }

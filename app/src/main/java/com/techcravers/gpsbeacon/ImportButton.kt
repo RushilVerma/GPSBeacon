@@ -26,7 +26,7 @@ fun ImportButton(context: Context, onImported: (List<LocationItem>) -> Unit) {
             onImported(importedHistory)
         }
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(8.dp)) {
             Image(
                 painter = painterResource(id = R.drawable.import_icon), // Your import icon drawable
                 contentDescription = "Import Icon"

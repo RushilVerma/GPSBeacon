@@ -20,6 +20,20 @@ import androidx.core.content.ContextCompat.startActivity
 import java.io.File
 import java.io.FileWriter
 import androidx.core.content.FileProvider
+
+data class LocationItem(
+    val id: Int,
+    val location: String,
+    val latitude: Double,
+    val longitude: Double,
+    val altitude: Double
+)
+
+data class WifiNetworkItem(
+    val ssid: String,
+    val rssi: Int,
+    var location: LocationItem
+)
 @Composable
 fun ExportButton(context: Context, locationHistory: List<LocationItem>, wifiNetworks: List<WifiNetworkItem>) {
     Card(modifier = Modifier

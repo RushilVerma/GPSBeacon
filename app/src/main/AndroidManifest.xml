@@ -26,6 +26,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <activity android:name=".AccelerometerActivity" />
+        <activity android:name=".LocationActivity" />
+        <activity android:name=".HomePageActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
